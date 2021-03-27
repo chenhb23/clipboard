@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+.parcel-cache
+.DS_Store
+.idea
+yarn-error.log
+.cache

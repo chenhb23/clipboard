@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            border: 0;
+            user-select: none;
+        }
+        html {
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+        .btn {
+            position: relative;
+            text-align: center;
+            height: 45px;
+            line-height: 45px;
+            width: 20px;
+            border-radius: 0 5px 5px 0;
+            margin-top: -1px;
+            /*color: transparent;*/
+            color: rgba(255,255,255,0.5);
+            transition: width 0.3s, color 0.3s 0.05s, font-size 0.3s;
+            overflow: hidden;
+            /*white-space: nowrap;*/
+            /*font-size: 10px;*/
+            font-size: 13px;
+            opacity: 0.9;
+            box-shadow: 0 -2px 3px rgba(0,0,0,0.2);
+            -webkit-app-region: drag;
+        }
+        .btn:hover {
+            width: 100px;
+            z-index: 9;
+            color: white;
+            font-size: 13px;
+        }
+        .btn:active {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div class="btn" style="background-color: red" onclick="show()" onmouseenter="test('onmouseenter')" onmouseleave="test('onmouseleave')">
+    文本
+</div>
+<div class="btn" style="background-color: orange">
+    链接
+</div>
+<div class="btn" style="background-color: green">
+    文件
+</div>
+<script src="../src/handle.ts"></script>
+<script>
+    window.onload = function () {
+      console.log('init')
+      // document.querySelector('.btn').addEventListener('hover', () => {
+      //   alert('hover')
+      // })
+    }
+    function show() {
+      alert('show')
+    }
+    function test(v) {
+      // alert(v)
+    }
+    window.addEventListener("keyup", () => {
+      // alert('a')
+    })
+</script>
+</body>
+</html>
