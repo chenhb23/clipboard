@@ -9,11 +9,11 @@ ipcRenderer.on('aaa', (event, args) => {
 
 // export default {}
 // export const a = {}
-if (remote) {
-  console.log("remote.getGlobal('store')", remote.getGlobal('store'))
-  remote.getGlobal('store').on('change', value => {
-    console.log('change', value)
-  })
-}
+// if (remote) {
+//   console.log("remote.getGlobal('store')", remote.getGlobal('store'))
+//   remote.getGlobal('store').on('change', value => {
+//     console.log('change', value)
+//   })
+// }
 
 console.log('location', new URL(location.href).searchParams.get('type'))
