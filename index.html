@@ -47,32 +47,7 @@
     </style>
 </head>
 <body>
-<div class="btn" style="background-color: red" onclick="show()" onmouseenter="test('onmouseenter')" onmouseleave="test('onmouseleave')">
-    文本
-</div>
-<div class="btn" style="background-color: orange">
-    链接
-</div>
-<div class="btn" style="background-color: green">
-    文件
-</div>
-<script src="../src/handle.ts"></script>
-<script>
-    window.onload = function () {
-      console.log('init')
-      // document.querySelector('.btn').addEventListener('hover', () => {
-      //   alert('hover')
-      // })
-    }
-    function show() {
-      alert('show')
-    }
-    function test(v) {
-      // alert(v)
-    }
-    window.addEventListener("keyup", () => {
-      // alert('a')
-    })
-</script>
+<div id="root"></div>
+<script src="src/page/index.tsx"></script>
 </body>
 </html>

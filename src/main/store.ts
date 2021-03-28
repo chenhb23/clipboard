@@ -20,5 +20,7 @@
 // // new Store().on('change', value => {
 // //   console.log('change', value)
 // // })
+import Watcher from './watcher'
+const watcher = new Watcher()
 
-global.store = {}
+global.store = watcher.data

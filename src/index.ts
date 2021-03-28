@@ -1,25 +1,17 @@
 // import {app, screen, BrowserWindow} from 'electron'
-import {
-  app,
-  screen,
-  BrowserWindow,
-  clipboard,
-  systemPreferences,
-  globalShortcut,
-  Tray,
-  Menu,
-  desktopCapturer,
-  ipcMain,
-} from 'electron'
+import {app, clipboard, globalShortcut, Tray, Menu, BrowserWindow} from 'electron'
 import path from 'path'
-import './store'
-import {getCursorDisplay} from './util'
-import {createMainWindow, createSearchWindow} from './window'
+import './main/store'
+import './main/handle'
+import {mainWindow, searchWindow} from './window'
 
 app.dock.hide()
-console.log('__dirname', __dirname)
 
 app.whenReady().then(() => {
+  globalShortcut.register('command+j', () => {
+    searchWindow.win ? searchWindow.close() : searchWindow.create()
+  })
+
   const appIcon = new Tray(path.resolve(__dirname, '../public/icon.png'))
   const context = Menu.buildFromTemplate([
     {
@@ -31,27 +23,23 @@ app.whenReady().then(() => {
     {
       label: '退出',
       click() {
-        app.quit()
+        // app.quit()
+        mainWindow.close()
       },
     },
   ])
   appIcon.setContextMenu(context)
+  mainWindow.create()
 
-  const win1 = createMainWindow()
-  // win1.on('ready-to-show', () => {
-  //   console.log('ccccccccccccc')
-  //   win1.webContents.send('aaa', '')
-  // })
-  // const win2 = createMainWindow()
-  const win2 = createSearchWindow()
-  setTimeout(() => {
-    win1.webContents.send('aaa', '')
-  }, 1000)
-  // ipcMain
+  app.on('activate', () => {
+    if (!BrowserWindow.getAllWindows().length) {
+      mainWindow.create()
+    }
+  })
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform === 'darwin') {
+  if (process.platform !== 'darwin') {
     app.quit()
   }
 })
