@@ -42,7 +42,7 @@ const iconActive = nativeImage.createFromPath(path.resolve(__dirname, '../public
 
 function createMenuContext(): Menu {
   return Menu.buildFromTemplate([
-    ...watcher.flatData.slice(0, 18).map(value => ({
+    ...watcher.data.slice(0, 18).map(value => ({
       label: trimCenter(value.value),
       click: async () => {
         writeClipboard(value)

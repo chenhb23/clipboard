@@ -16,17 +16,12 @@ export interface WatcherDataItem {
 export default class Watcher extends EventEmitter {
   throttle = 500
 
-  data: {[key in WatcherDataItem['format'] | string]?: WatcherDataItem[]} = {
-    // text: [],
-    // file: [],
-    // image: [],
-  }
+  // 改为数组形式，降低 add 方法的计算消耗
+  data: WatcherDataItem[] = []
 
-  get flatData(): WatcherDataItem[] {
-    return Object.keys(this.data)
-      .map(key => this.data[key])
-      .flat()
-      .sort((a, b) => b.time.getTime() - a.time.getTime())
+  get(format?: WatcherFormat) {
+    if (!format) return this.data
+    return this.data.filter(value => value.format === format)
   }
 
   constructor(props?) {
@@ -63,18 +58,17 @@ export default class Watcher extends EventEmitter {
   }
 
   add(data: WatcherDataItem) {
-    if (!this.data[data.format]) {
-      this.data[data.format] = []
-    }
-    const fullData = {...data, time: data.time ?? new Date()}
-    if (this.data[data.format][0]?.value !== data.value) {
-      this.data[data.format] = [fullData, ...this.data[data.format].filter(value => value.value !== data.value)]
+    if (this.data[0]?.value !== data.value) {
+      const fullData = {...data, time: data.time ?? new Date()}
+      this.data = [fullData, ...this.data.filter(value => value.value !== data.value)]
+      this.emit('change', this.data)
       this.onChange(fullData)
     }
   }
 
   remove(data: Pick<WatcherDataItem, 'format' | 'value'>) {
-    this.data[data.format] = this.data[data.format]?.filter(value => value.value !== data.value)
+    this.data = this.data.filter(value => value.value !== data.value && value.format !== data.format)
+    this.emit('change', this.data)
   }
 
   /**
@@ -82,12 +76,11 @@ export default class Watcher extends EventEmitter {
    */
   clear(format?: WatcherFormat) {
     if (format) {
-      this.data[format] = []
+      this.data = this.data.filter(value => value.format !== format)
     } else {
-      Object.keys(this.data).forEach(key => {
-        this.data[key] = []
-      })
+      this.data = []
     }
+    this.emit('change', this.data)
   }
 
   private onChange(data: WatcherDataItem) {
@@ -115,6 +108,7 @@ export default class Watcher extends EventEmitter {
   //
   // onLinkChange(data: WatcherDataItem) {}
 
+  on(event: 'change', listener: (data: WatcherDataItem[]) => void): this
   on(event: 'text-change', listener: (data: WatcherDataItem) => void): this
   on(event: 'file-change', listener: (data: WatcherDataItem) => void): this
   on(event: 'image-change', listener: (data: WatcherDataItem) => void): this
@@ -123,11 +117,21 @@ export default class Watcher extends EventEmitter {
     return super.on(event, listener)
   }
 
+  once(event: 'change', listener: (data: WatcherDataItem[]) => void): this
   once(event: 'text-change', listener: (data: WatcherDataItem) => void): this
   once(event: 'file-change', listener: (data: WatcherDataItem) => void): this
   once(event: 'image-change', listener: (data: WatcherDataItem) => void): this
   once(event: 'link-change', listener: (data: WatcherDataItem) => void): this
   once(event, listener) {
     return super.once(event, listener)
+  }
+
+  off(event: 'change', listener: (data: WatcherDataItem[]) => void): this
+  off(event: 'text-change', listener: (data: WatcherDataItem) => void): this
+  off(event: 'file-change', listener: (data: WatcherDataItem) => void): this
+  off(event: 'image-change', listener: (data: WatcherDataItem) => void): this
+  off(event: 'link-change', listener: (data: WatcherDataItem) => void): this
+  off(event, listener) {
+    return super.off(event, listener)
   }
 }

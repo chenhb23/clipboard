@@ -1,15 +1,21 @@
-import React from 'react'
+import React, {useState} from 'react'
 import ReactDOM from 'react-dom'
 import './list.css'
+import type Watcher from '../main/watcher'
+import {remote} from 'electron'
+
+const watcher: Watcher = remote.getGlobal('watcher')
 
 const App = () => {
+  const [data, setValue] = useState(watcher.get(new URLSearchParams(location.search).get('type')))
+
   return (
     <div className={'container'}>
       <p className={'title'}>list</p>
       <input type='text' />
       <div className='content'>
-        {Array.from({length: 500}).map((_, index) => (
-          <p key={index}>{index}</p>
+        {data.map(value => (
+          <p key={value.value}>{value.value}</p>
         ))}
       </div>
     </div>

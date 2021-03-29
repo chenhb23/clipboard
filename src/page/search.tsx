@@ -7,19 +7,20 @@ import type {WatcherDataItem} from '../main/watcher'
 import {writeClipboard} from '../common/clipboard'
 import {formatDate} from '../util'
 
+const watcher: Watcher = remote.getGlobal('watcher')
+
 function App() {
   const [activeIndex, _setActiveIndex] = useState(0)
   const [search, setSearch] = useState('')
-  const [store, setStore] = useState<Watcher>(null)
+  const [data] = useState<WatcherDataItem[]>(watcher.data)
+
   const list: WatcherDataItem[] = useMemo(() => {
-    const flatData = store?.flatData
-    if (!flatData) return []
-    return search ? flatData.filter(value => value.value.includes(search)) : flatData
-  }, [search, store?.flatData])
+    return search ? data.filter(value => value.value.includes(search)) : data
+  }, [data, search])
   const activeItem = list[activeIndex]
 
-  console.log('activeItem', activeItem)
-  console.log(list)
+  // console.log('activeItem', activeItem)
+  // console.log(list)
   const setActive = useCallback(
     (index: number) => {
       _setActiveIndex(Math.max(0, Math.min(list.length - 1, index)))
@@ -30,9 +31,8 @@ function App() {
 
   const selectRow = useCallback(
     (index: number) => {
-      console.log(list[index])
       writeClipboard(list[index])
-      console.log('已复制到粘贴板✔️')
+      // todo: show console.log('已复制到粘贴板✔️')
       ipcRenderer.invoke('closeSearchWindow')
     },
     [list]
@@ -49,16 +49,11 @@ function App() {
         case 'ArrowDown':
           return setActive(activeIndex + 1)
         case 'Escape':
-          ipcRenderer.invoke('closeSearchWindow')
+          return ipcRenderer.invoke('closeSearchWindow')
       }
     },
     [activeIndex, selectRow, setActive]
   )
-
-  useEffect(() => {
-    const watcher: Watcher = remote.getGlobal('watcher')
-    setStore(watcher)
-  }, [])
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyboard)

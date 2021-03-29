@@ -5,6 +5,7 @@ import {clipboard} from 'electron'
 export function writeClipboard(data: WatcherDataItem) {
   switch (data.format) {
     case 'text':
+    case 'link':
       return clipboard.writeText(data.value)
     case 'image': // return clipboard.writeImage(NativeImage.createFromPath(data.value))
     case 'file':

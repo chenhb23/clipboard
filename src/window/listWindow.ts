@@ -9,13 +9,13 @@ class ListWindow<T extends string = string> extends WindowManage<T> {
     const winHeight = 400
     const win = new BrowserWindow({
       height: winHeight,
-      width: 300,
+      width: 800,
       x: 20,
       y: Math.round((height - winHeight) / 2),
-      modal: true,
-      titleBarStyle: 'hidden',
-      resizable: false,
-      fullscreenable: false,
+      // modal: true,
+      // titleBarStyle: 'hidden',
+      // resizable: false,
+      // fullscreenable: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
