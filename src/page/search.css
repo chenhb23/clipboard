@@ -1,13 +1,13 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-body {
-  padding: 12px 0;
-  /*padding: 12px;*/
-  font-size: 13px;
-}
+/*body {*/
+/*  padding: 12px 0;*/
+/*  font-size: 13px;*/
+/*}*/
 
 .icon {
   width: 1em; height: 1em;
@@ -17,6 +17,11 @@ body {
   color: #666666;
 }
 
+#root {
+  height: 100vh;
+  padding: 1px 0;
+}
+
 .container {
   position: relative;
   border-radius: 5px;
@@ -24,6 +29,9 @@ body {
   border: 1px solid #C6C9CC;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  /*padding: 12px 0;*/
+  font-size: 13px;
 }
 
 /*.mask {*/
@@ -58,7 +66,8 @@ body {
 .drop {
   display: flex;
   flex: 1;
-  height: 260px;
+  /*height: 260px;*/
+  overflow: hidden;
   border-top: 1px solid #C6C9CC;
 }
 .detail {

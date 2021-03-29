@@ -2,26 +2,23 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import ReactDOM from 'react-dom'
 import './search.css'
 import {ipcRenderer, remote} from 'electron'
+import type Watcher from '../main/watcher'
 import type {WatcherDataItem} from '../main/watcher'
 import {writeClipboard} from '../common/clipboard'
-import {Simulate} from 'react-dom/test-utils'
-import keyPress = Simulate.keyPress
 import {formatDate} from '../util'
 
 function App() {
   const [activeIndex, _setActiveIndex] = useState(0)
   const [search, setSearch] = useState('')
-  const [store, setStore] = useState({} as {[key: string]: WatcherDataItem[]})
+  const [store, setStore] = useState<Watcher>(null)
   const list: WatcherDataItem[] = useMemo(() => {
-    const flatList = Object.keys(store)
-      .map(key => store[key])
-      .flat()
-    console.log('flatList', flatList)
-    return search ? flatList.filter(value => value.value.includes(search)) : flatList
-  }, [search, store])
+    const flatData = store?.flatData
+    if (!flatData) return []
+    return search ? flatData.filter(value => value.value.includes(search)) : flatData
+  }, [search, store?.flatData])
   const activeItem = list[activeIndex]
-  console.log('activeItem', activeItem)
 
+  console.log('activeItem', activeItem)
   console.log(list)
   const setActive = useCallback(
     (index: number) => {
@@ -59,8 +56,8 @@ function App() {
   )
 
   useEffect(() => {
-    const store = remote.getGlobal('store')
-    setStore(store)
+    const watcher: Watcher = remote.getGlobal('watcher')
+    setStore(watcher)
   }, [])
 
   useEffect(() => {

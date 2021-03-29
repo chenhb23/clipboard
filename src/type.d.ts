@@ -1,5 +1,6 @@
 namespace NodeJS {
+  import type Watcher from './main/watcher'
   interface Global {
-    store: any
+    watcher: Watcher
   }
 }

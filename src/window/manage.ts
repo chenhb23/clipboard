@@ -1,4 +1,4 @@
-import {BrowserWindow} from 'electron'
+import {BrowserWindow, Rectangle} from 'electron'
 
 export default abstract class WindowManage<ARG = any> {
   protected abstract createWindow(...args: ARG[]): BrowserWindow
@@ -19,5 +19,16 @@ export default abstract class WindowManage<ARG = any> {
       }
       this.win.close()
     }
+  }
+
+  private resizeTimer: NodeJS.Timeout
+  resize(bounds: Partial<Rectangle>, animate = true) {
+    clearTimeout(this.resizeTimer)
+    this.resizeTimer = setTimeout(() => {
+      const winBound = this.win.getBounds()
+      if (Object.keys(bounds).some(key => bounds[key] !== winBound[key])) {
+        this.win.setBounds(bounds, animate)
+      }
+    }, 25)
   }
 }

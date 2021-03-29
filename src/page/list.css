@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/*html, body {*/
+/*  height: 100%;*/
+/*}*/
+#root {
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.title {
+  padding: 24px 10px 10px 10px;
+  background-color: red;
+  color: white;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  background-color: #C6C9CC;
+  overflow-x: scroll;
+}

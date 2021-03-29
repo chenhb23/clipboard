@@ -5,11 +5,12 @@ import {getCursorDisplay} from '../util'
 
 class MainWindow extends WindowManage {
   protected createWindow() {
-    const {height} = getCursorDisplay().bounds
+    const {height} = getCursorDisplay().workArea
 
     const win = new BrowserWindow({
-      height: 200,
-      width: 120,
+      // height: 200,
+      // width: 120,
+      width: 20,
       x: 0,
       y: Math.round((height - 200) / 2),
       frame: false,
@@ -21,7 +22,6 @@ class MainWindow extends WindowManage {
       fullscreenable: false,
 
       // skipTaskbar: true,
-      // skipTaskbar: true
       // kiosk: true, // 只允许运行一个应用
       // backgroundColor: 'blue',
       // autoHideMenuBar: true,

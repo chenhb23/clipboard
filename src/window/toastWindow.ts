@@ -2,20 +2,22 @@ import WindowManage from './manage'
 import {BrowserWindow} from 'electron'
 import path from 'path'
 
-class SearchWindow<T extends string = string> extends WindowManage<T> {
-  protected createWindow() {
+class ToastWindow<T extends string = string> extends WindowManage<T> {
+  protected createWindow(type?: T) {
     const win = new BrowserWindow({
       // height: 300 + 12 * 2,
       // width: 224,
-      center: true,
-      frame: false,
-      transparent: true,
-      alwaysOnTop: true,
-      hasShadow: false,
-      closable: false,
-      resizable: false,
-      fullscreenable: false,
+      // center: true,
+      // frame: false,
+      // transparent: true,
+      // alwaysOnTop: true,
+      // hasShadow: false,
+      // closable: false,
+      // resizable: false,
+      // fullscreenable: false,
+
       webPreferences: {
+        // webSecurity: false,
         nodeIntegration: true,
         contextIsolation: false, // parcel 编译相关: Uncaught ReferenceError: process is not defined
         enableRemoteModule: true,
@@ -28,7 +30,9 @@ class SearchWindow<T extends string = string> extends WindowManage<T> {
       // autoHideMenuBar: true
     })
     // win.loadURL('http://localhost:1234/search.html')
-    win.loadFile(path.resolve(__dirname, '../../dist/search.html'))
+    win.loadFile(path.resolve(__dirname, '../../dist/search.html'), {
+      query: {type},
+    })
     // win.webContents.openDevTools()
 
     // win.once('blur', () => this.close())
@@ -37,4 +41,4 @@ class SearchWindow<T extends string = string> extends WindowManage<T> {
   }
 }
 
-export const searchWindow = new SearchWindow()
+export const toastWindow = new ToastWindow()
