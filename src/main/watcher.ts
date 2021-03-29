@@ -9,10 +9,6 @@ export interface WatcherDataItem {
   time?: Date
 }
 
-// export interface WatcherData {
-//   [key: string]: WatcherDataItem[]
-// }
-
 export default class Watcher extends EventEmitter {
   throttle = 500
 
@@ -67,7 +63,10 @@ export default class Watcher extends EventEmitter {
   }
 
   remove(data: Pick<WatcherDataItem, 'format' | 'value'>) {
-    this.data = this.data.filter(value => value.value !== data.value && value.format !== data.format)
+    const first = this.data[0]
+    this.data = this.data.filter(value => value.value !== data.value || value.format !== data.format)
+    this.checkClipboard(first)
+
     this.emit('change', this.data)
   }
 
@@ -75,12 +74,21 @@ export default class Watcher extends EventEmitter {
    * 不传删除全部
    */
   clear(format?: WatcherFormat) {
+    const first = this.data[0]
     if (format) {
       this.data = this.data.filter(value => value.format !== format)
     } else {
       this.data = []
     }
+    this.checkClipboard(first)
     this.emit('change', this.data)
+  }
+
+  // 如果过滤后端的第一项和原始的第一项不相同，则清除粘贴板内容
+  checkClipboard(firstItem: WatcherDataItem) {
+    if (firstItem.value && firstItem.value !== this.data[0]?.value) {
+      clipboard.clear()
+    }
   }
 
   private onChange(data: WatcherDataItem) {
@@ -99,14 +107,6 @@ export default class Watcher extends EventEmitter {
         return this.emit('link-change', data)
     }
   }
-
-  // onTextChange(data: WatcherDataItem) {}
-  //
-  // onFileChange(data: WatcherDataItem) {}
-  //
-  // onImageChange(data: WatcherDataItem) {}
-  //
-  // onLinkChange(data: WatcherDataItem) {}
 
   on(event: 'change', listener: (data: WatcherDataItem[]) => void): this
   on(event: 'text-change', listener: (data: WatcherDataItem) => void): this

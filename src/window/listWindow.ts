@@ -3,8 +3,8 @@ import {BrowserWindow} from 'electron'
 import {getCursorDisplay} from '../util'
 import path from 'path'
 
-class ListWindow<T extends string = string> extends WindowManage<T> {
-  createWindow(type?: T) {
+class ListWindow<T extends {type?: string; color?: string} = any> extends WindowManage<T> {
+  createWindow(args?: T) {
     const {height} = getCursorDisplay().workArea
     const winHeight = 400
     const win = new BrowserWindow({
@@ -12,10 +12,10 @@ class ListWindow<T extends string = string> extends WindowManage<T> {
       width: 800,
       x: 20,
       y: Math.round((height - winHeight) / 2),
-      // modal: true,
-      // titleBarStyle: 'hidden',
-      // resizable: false,
-      // fullscreenable: false,
+      modal: true,
+      titleBarStyle: 'hidden',
+      resizable: false,
+      fullscreenable: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
@@ -24,7 +24,7 @@ class ListWindow<T extends string = string> extends WindowManage<T> {
     })
 
     win.loadFile(path.resolve(__dirname, '../../dist/list.html'), {
-      query: {type},
+      query: args,
     })
 
     return win

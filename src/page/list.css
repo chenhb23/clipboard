@@ -15,18 +15,62 @@
   flex-direction: column;
   flex: 1;
   height: 100%;
+  background-color: #E5E6EA;
 }
 
 .title {
   padding: 24px 10px 10px 10px;
-  background-color: red;
+  /*background-color: red;*/
   color: white;
+  -webkit-app-region: drag;
 }
 
 .content {
   display: flex;
   flex: 1;
   flex-direction: column;
-  background-color: #C6C9CC;
   overflow-x: scroll;
+}
+
+.row {
+  background-color: #F0F0F0;
+  padding: 6px 8px 8px 8px;
+  margin: 6px 18px;
+  border-radius: 8px;
+  color: #4D4D4D;
+  font-size: 13px;
+  cursor: default;
+  position: relative;
+}
+.row:hover .close {
+  display: inline;
+}
+
+.time {
+  font-size: 12px;
+  color: #888888;
+}
+
+.search {
+  height: 30px;
+  line-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: transparent;
+  margin: 10px;
+  outline: none;
+}
+
+.close {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: #888888;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  display: none;
 }
