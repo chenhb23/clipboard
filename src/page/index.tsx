@@ -13,15 +13,15 @@ const btns = [
 ]
 // todo: 在 ipcMain 端根据 length 设置 height
 const windowHeight = btns.length * (45 - 1) + 8 * 2
-ipcRenderer.invoke('resizeMain', {height: windowHeight})
+ipcRenderer.send('resizeMain', {height: windowHeight})
 
 const App = () => {
   const mouseEnter = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    ipcRenderer.invoke('resizeMain', {width: 100})
+    ipcRenderer.send('resizeMain', {width: 100})
     event.currentTarget.classList.add('hover')
   }, [])
   const mouseLeave = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    ipcRenderer.invoke('resizeMain', {width: 20})
+    ipcRenderer.send('resizeMain', {width: 20})
     event.currentTarget.classList.remove('hover')
   }, [])
 
@@ -33,7 +33,7 @@ const App = () => {
           className='btn'
           style={{backgroundColor: value.color}}
           onClick={event => {
-            ipcRenderer.invoke('createListWindow', {format: value.format, color: value.color})
+            ipcRenderer.send('createListWindow', {format: value.format, color: value.color})
             mouseLeave(event)
           }}
           onMouseEnter={mouseEnter}
@@ -46,7 +46,7 @@ const App = () => {
         className='btn'
         style={{backgroundColor: 'red'}}
         onClick={event => {
-          ipcRenderer.invoke('createListWindow', {type: 'text', color: 'red'})
+          ipcRenderer.send('createListWindow', {type: 'text', color: 'red'})
           mouseLeave(event)
         }}
         onMouseEnter={mouseEnter}

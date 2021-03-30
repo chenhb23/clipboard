@@ -1,6 +1,3 @@
-/*html, body {*/
-/*  height: 100%;*/
-/*}*/
 #root {
   height: 100vh;
 }
@@ -14,7 +11,8 @@
 }
 
 .title {
-  padding: 24px 10px 10px 10px;
+  /*padding: 24px 10px 10px 10px;*/
+  padding: 11px;
   /*background-color: red;*/
   color: white;
   -webkit-app-region: drag;
@@ -60,7 +58,8 @@
 }
 
 .time {
-  font-size: 12px;
+  margin-top: 2px;
+  font-size: 11px;
   color: #888888;
 }
 

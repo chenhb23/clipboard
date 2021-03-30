@@ -32,7 +32,7 @@ function App() {
     (index: number) => {
       writeClipboard(list[index])
       // todo: show console.log('已复制到粘贴板✔️')
-      ipcRenderer.invoke('closeSearchWindow')
+      ipcRenderer.send('closeSearchWindow')
     },
     [list]
   )
@@ -48,7 +48,7 @@ function App() {
         case 'ArrowDown':
           return setActive(activeIndex + 1)
         case 'Escape':
-          return ipcRenderer.invoke('closeSearchWindow')
+          return ipcRenderer.send('closeSearchWindow')
       }
     },
     [activeIndex, selectRow, setActive]

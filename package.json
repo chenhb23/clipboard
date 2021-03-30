@@ -4,8 +4,7 @@
   "description": "macos 粘贴板应用",
   "main": "build/index.js",
   "scripts": {
-    "dev": "parcel src/page/index.html src/page/search.html src/page/list.html",
-    "build": "parcel --target electron --public-url . src/page/index.html src/page/search.html src/page/list.html",
+    "web": "parcel --target electron --public-url . src/page/index.html src/page/search.html src/page/list.html",
     "start": "tsc && electron ."
   },
   "keywords": [
