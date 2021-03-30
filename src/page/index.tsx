@@ -3,13 +3,15 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import {ipcRenderer} from 'electron'
 
+// const colors = ['#F6563F', '#e29d35', '#469f20', '#357bd7']
+// todo: 持久化 btns
 const btns = [
   {format: 'text', text: '文本', color: '#F6563F'},
   {format: 'file', text: '目录', color: '#e29d35'},
   {format: 'image', text: '图片', color: '#469f20'},
   {format: 'link', text: '链接', color: '#357bd7'},
 ]
-// todo: 在 ipcMain 端设置 height
+// todo: 在 ipcMain 端根据 length 设置 height
 const windowHeight = btns.length * (45 - 1) + 8 * 2
 ipcRenderer.invoke('resizeMain', {height: windowHeight})
 

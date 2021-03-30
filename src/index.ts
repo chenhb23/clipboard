@@ -10,7 +10,7 @@ import {
 } from 'electron'
 import path from 'path'
 import watcher from './main/watcher'
-import './main/handle'
+import './main'
 import {mainWindow, searchWindow} from './window'
 import {writeClipboard} from './common/clipboard'
 import {delay, trimCenter} from './util'
@@ -60,6 +60,7 @@ app.whenReady().then(() => {
   appIcon.on('mouse-down', () => appIcon.setContextMenu(createMenuContext()))
 
   mainWindow.create()
+  mainWindow.followWindow()
 
   globalShortcut.register('command+j', () => (searchWindow.win ? searchWindow.close() : searchWindow.create()))
   globalShortcut.register('command+u', () => appIcon.popUpContextMenu(createMenuContext()))

@@ -1,17 +1,18 @@
 import {clipboard, desktopCapturer} from 'electron'
 import EventEmitter from 'events'
+import fs from 'fs'
 
 export type WatcherFormat = 'text' | 'link' | 'file' | 'image' | string // 4个预设的type
 
 export interface WatcherDataItem {
   format: WatcherFormat
   value: string
-  time?: Date
+  time?: number
   iconId?: string
 }
 
 export class Watcher extends EventEmitter {
-  throttle = 500
+  throttle = 800
 
   // 改为数组形式，降低 add 方法的计算消耗
   data: WatcherDataItem[] = []
@@ -27,6 +28,11 @@ export class Watcher extends EventEmitter {
     this.start()
   }
 
+  restore(value: Partial<Pick<Watcher, 'data' | 'icon'>>) {
+    this.data = value?.data ?? this.data
+    this.icon = value?.icon ?? this.icon
+  }
+
   private timer: NodeJS.Timeout
   start() {
     this.timer = setInterval(this.readClipboard, this.throttle)
@@ -36,20 +42,22 @@ export class Watcher extends EventEmitter {
     clearInterval(this.timer)
   }
 
+  private imgExt = ['.png', '.jpg', '.jpeg']
   readClipboard = () => {
-    // todo: id: icon dataUrl, 前提: 需要持久化
-    // desktopCapturer.getSources({types: ['window'], fetchWindowIcons: true}).then(value => {
-    //   fs.writeFileSync(path.resolve(__dirname, value[0].name), value[0].appIcon.toPNG())
-    // })
-
+    // todo: windows for -> FileNameW
+    // const file = clipboard.read('NSFilenamesPboardType')
     const file = clipboard.read('public.file-url')
     const text = clipboard.readText()
     if (file) {
-      const image = clipboard.readImage()
-      this.add({
-        format: !image.isEmpty() ? 'image' : 'file',
-        value: file,
-      })
+      let isImage = false
+      const filepath = decodeURIComponent(file).replace(/^file:\/\//, '') // todo: macos 以 file:// 开头
+      if (
+        this.imgExt.some(value => file.toLowerCase().endsWith(value)) ||
+        (fs.existsSync(filepath) && fs.statSync(filepath).size <= 1024 * 1024 * 20) // 只读取20m文件
+      ) {
+        isImage = !clipboard.readImage().isEmpty()
+      }
+      this.add({format: isImage ? 'image' : 'file', value: file})
     } else if (text?.trim()) {
       this.add({format: /^ *https?:\/\/.+\..+/.test(text) ? 'link' : 'text', value: text})
     }
@@ -57,15 +65,14 @@ export class Watcher extends EventEmitter {
 
   async add(data: WatcherDataItem) {
     if (this.data[0]?.value !== data.value) {
-      const fullData = {...data, time: data.time ?? new Date()}
-      // console.time('desktopCapturer')
+      const fullData = {...data, time: data.time ?? Date.now()}
       const value = await desktopCapturer.getSources({types: ['window'], fetchWindowIcons: true})
       const {id, appIcon} = value[0]
       if (!this.icon[id]) {
         this.icon[id] = appIcon.resize({width: 50, height: 50}).toDataURL()
+        this.emit('add-icon', this.icon)
       }
       fullData.iconId = id
-      // console.timeEnd('desktopCapturer')
 
       this.data = [fullData, ...this.data.filter(value => value.value !== data.value)]
       this.emit('change', this.data)
@@ -120,6 +127,7 @@ export class Watcher extends EventEmitter {
   }
 
   on(event: 'change', listener: (data: WatcherDataItem[]) => void): this
+  on(event: 'add-icon', listener: (icon: Watcher['icon']) => void): this
   on(event: 'text-change', listener: (data: WatcherDataItem) => void): this
   on(event: 'file-change', listener: (data: WatcherDataItem) => void): this
   on(event: 'image-change', listener: (data: WatcherDataItem) => void): this
@@ -129,6 +137,7 @@ export class Watcher extends EventEmitter {
   }
 
   once(event: 'change', listener: (data: WatcherDataItem[]) => void): this
+  once(event: 'add-icon', listener: (icon: Watcher['icon']) => void): this
   once(event: 'text-change', listener: (data: WatcherDataItem) => void): this
   once(event: 'file-change', listener: (data: WatcherDataItem) => void): this
   once(event: 'image-change', listener: (data: WatcherDataItem) => void): this
@@ -138,6 +147,7 @@ export class Watcher extends EventEmitter {
   }
 
   off(event: 'change', listener: (data: WatcherDataItem[]) => void): this
+  off(event: 'add-icon', listener: (icon: Watcher['icon']) => void): this
   off(event: 'text-change', listener: (data: WatcherDataItem) => void): this
   off(event: 'file-change', listener: (data: WatcherDataItem) => void): this
   off(event: 'image-change', listener: (data: WatcherDataItem) => void): this

@@ -69,7 +69,11 @@ const App = () => {
               }
             }}
           >
-            <img className={'left'} src={watcher.icon[value.iconId]} alt={''} />
+            {value.format === 'image' ? (
+              <img className={'left'} src={value.value} alt={''} />
+            ) : (
+              <img className={'left'} src={watcher.icon[value.iconId]} alt={''} />
+            )}
             <div className='right'>
               <p className={'ellipsis'}>{value.value}</p>
               <p className={'time'}>{formatDate(value.time)}</p>
