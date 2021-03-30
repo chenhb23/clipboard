@@ -64,7 +64,7 @@ const App = () => {
             onDoubleClick={() => selectRow(value)}
             onMouseDown={event => {
               if (event.button === 2) {
-                const context = remote.Menu.buildFromTemplate([{label: '复制', click: () => selectRow(value)}])
+                const context = remote.Menu.buildFromTemplate([{label: '复制到粘贴板', click: () => selectRow(value)}])
                 context.popup()
               }
             }}
