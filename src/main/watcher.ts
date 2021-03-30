@@ -1,4 +1,4 @@
-import {clipboard} from 'electron'
+import {clipboard, desktopCapturer} from 'electron'
 import EventEmitter from 'events'
 
 export type WatcherFormat = 'text' | 'link' | 'file' | 'image' | string // 4个预设的type
@@ -7,13 +7,15 @@ export interface WatcherDataItem {
   format: WatcherFormat
   value: string
   time?: Date
+  iconId?: string
 }
 
-export default class Watcher extends EventEmitter {
+export class Watcher extends EventEmitter {
   throttle = 500
 
   // 改为数组形式，降低 add 方法的计算消耗
   data: WatcherDataItem[] = []
+  icon: {[id: string]: string} = {}
 
   get(format?: WatcherFormat) {
     if (!format) return this.data
@@ -53,9 +55,18 @@ export default class Watcher extends EventEmitter {
     }
   }
 
-  add(data: WatcherDataItem) {
+  async add(data: WatcherDataItem) {
     if (this.data[0]?.value !== data.value) {
       const fullData = {...data, time: data.time ?? new Date()}
+      // console.time('desktopCapturer')
+      const value = await desktopCapturer.getSources({types: ['window'], fetchWindowIcons: true})
+      const {id, appIcon} = value[0]
+      if (!this.icon[id]) {
+        this.icon[id] = appIcon.resize({width: 50, height: 50}).toDataURL()
+      }
+      fullData.iconId = id
+      // console.timeEnd('desktopCapturer')
+
       this.data = [fullData, ...this.data.filter(value => value.value !== data.value)]
       this.emit('change', this.data)
       this.onChange(fullData)
@@ -135,3 +146,26 @@ export default class Watcher extends EventEmitter {
     return super.off(event, listener)
   }
 }
+
+const watcher = new Watcher()
+
+// watcher.on('change', data => {
+//   // fs.writeFile
+//   const USER_DATA = app.getPath('userData')
+// })
+
+// function getAppIcon() {
+//   return new Promise(resolve => {
+//     desktopCapturer.getSources({types: ['window'], fetchWindowIcons: true}).then(value => {
+//       const {id, appIcon} = value[0]
+//       if (!this.icon[id]) {
+//         this.icon[id] = appIcon.toDataURL()
+//       }
+//       fullData.iconId = id
+//     })
+//   })
+// }
+
+global.watcher = watcher
+
+export default watcher

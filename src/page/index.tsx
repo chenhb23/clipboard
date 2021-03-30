@@ -5,7 +5,7 @@ import {ipcRenderer} from 'electron'
 
 const btns = [
   {format: 'text', text: '文本', color: '#F6563F'},
-  {format: 'file', text: '文件', color: '#e29d35'},
+  {format: 'file', text: '目录', color: '#e29d35'},
   {format: 'image', text: '图片', color: '#469f20'},
   {format: 'link', text: '链接', color: '#357bd7'},
 ]

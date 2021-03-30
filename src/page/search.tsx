@@ -2,8 +2,7 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import ReactDOM from 'react-dom'
 import './search.css'
 import {ipcRenderer, remote} from 'electron'
-import type Watcher from '../main/watcher'
-import type {WatcherDataItem} from '../main/watcher'
+import type {WatcherDataItem, Watcher} from '../main/watcher'
 import {writeClipboard} from '../common/clipboard'
 import {formatDate} from '../util'
 
@@ -88,12 +87,13 @@ function App() {
               className={`row ${activeIndex === index ? 'hover' : ''}`}
               onMouseEnter={() => setActive(index)}
             >
+              <img src={watcher.icon[value.iconId]} alt='' />
               <p>{value.value}</p>
             </div>
           ))}
         </div>
         <div className='detail'>
-          <div className='content'>
+          <div className='scrollView'>
             <pre>{activeItem?.value}</pre>
           </div>
           <p className={'time'}>{formatDate(activeItem?.time)}</p>

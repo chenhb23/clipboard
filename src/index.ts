@@ -9,7 +9,7 @@ import {
   nativeImage,
 } from 'electron'
 import path from 'path'
-import watcher from './main/store'
+import watcher from './main/watcher'
 import './main/handle'
 import {mainWindow, searchWindow} from './window'
 import {writeClipboard} from './common/clipboard'

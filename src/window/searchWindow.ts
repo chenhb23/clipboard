@@ -31,7 +31,7 @@ class SearchWindow<T extends string = string> extends WindowManage<T> {
     win.loadFile(path.resolve(__dirname, '../../dist/search.html'))
     // win.webContents.openDevTools()
 
-    // win.once('blur', () => this.close())
+    win.once('blur', () => this.close())
 
     return win
   }
