@@ -1,4 +1,5 @@
 import {BrowserWindow, screen} from 'electron'
+import path from 'path'
 
 export const delay = (ms = 1000) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -28,4 +29,9 @@ export function trimCenter(value: string) {
   const size = 38
   if (value.length <= size) return value
   return `${value.slice(0, size / 2)}...${value.slice(-size / 2)}`
+}
+
+export function getNameFromPath(p: string) {
+  const arr = p.replace(new RegExp(`${path.sep}$`), '').split(path.sep)
+  return arr[arr.length - 1]
 }

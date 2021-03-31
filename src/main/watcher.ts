@@ -10,7 +10,7 @@ export interface WatcherDataItem {
   time?: number
   iconId?: string
 }
-
+// todo: 移动到 worker
 export class Watcher extends EventEmitter {
   throttle = 800
 
@@ -65,16 +65,25 @@ export class Watcher extends EventEmitter {
 
   async add(data: WatcherDataItem) {
     if (this.data[0]?.value !== data.value) {
-      const fullData = {...data, time: data.time ?? Date.now()}
-      const value = await desktopCapturer.getSources({types: ['window'], fetchWindowIcons: true})
-      const {id, appIcon} = value[0]
-      if (!this.icon[id]) {
-        this.icon[id] = appIcon.resize({width: 50, height: 50}).toDataURL()
-        this.emit('add-icon', this.icon)
-      }
-      fullData.iconId = id
+      const index = this.data.findIndex(value => value.value === data.value)
+      const fullData: WatcherDataItem = {...data, time: Date.now(), iconId: data.iconId || this.data[index]?.iconId}
 
-      this.data = [fullData, ...this.data.filter(value => value.value !== data.value)]
+      if (!fullData.iconId) {
+        const value = await desktopCapturer.getSources({types: ['window'], fetchWindowIcons: true})
+        const {id, appIcon} = value[0]
+        if (!this.icon[id]) {
+          this.icon[id] = appIcon.resize({width: 50, height: 50}).toDataURL()
+          this.emit('add-icon', this.icon)
+        }
+        fullData.iconId = id
+      }
+
+      if (index >= 0) {
+        // 不用数组展开的方式，直接操作数组比较快
+        this.data.splice(index, 1)
+      }
+      this.data.unshift(fullData)
+
       this.emit('change', this.data)
       this.onChange(fullData)
     }

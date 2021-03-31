@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import './list.css'
 import type {WatcherDataItem, Watcher} from '../main/watcher'
 import {ipcRenderer, remote} from 'electron'
-import {formatDate} from '../util'
+import {formatDate, getNameFromPath} from '../util'
 import {writeClipboard} from '../common/clipboard'
 
 const watcher: Watcher = remote.getGlobal('watcher')
@@ -99,8 +99,16 @@ const App = () => {
                 alt={''}
               />
               <div className='right'>
-                <p className={'ellipsis'}>{decodeName}</p>
-                <p className={'time'}>{formatDate(value.time)}</p>
+                {isFile ? (
+                  <>
+                    <p className={'ellipsis'}>{getNameFromPath(decodeName)}</p>
+                    <p className={'subtitle ellipsis'}>{decodeName}</p>
+                  </>
+                ) : (
+                  <p className={'ellipsis'}>{decodeName}</p>
+                )}
+
+                <p className={'subtitle'}>{formatDate(value.time)}</p>
               </div>
 
               <svg
