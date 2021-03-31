@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom'
 import './list.css'
 import type {WatcherDataItem, Watcher} from '../main/watcher'
 import {ipcRenderer, remote} from 'electron'
-import {formatDate, getNameFromPath} from '../util'
+import {decodeValue, formatDate, getNameFromPath} from '../util'
 import {writeClipboard} from '../common/clipboard'
+import {VirtualList} from '../components/VirtualList'
 
 const watcher: Watcher = remote.getGlobal('watcher')
 const urlParams = new URLSearchParams(location.search)
@@ -68,13 +69,78 @@ const App = () => {
           }}
         />
       </div>
-      <ScrollView>
+      <VirtualList
+        list={list}
+        // itemHeight={50}
+        renderItem={item => {
+          console.log(item.value)
+          const isFile = ['image', 'file'].includes(item.format)
+          // const decodeName = decodeName(item.value)
+          const decodeName = decodeValue(item.value)
+          // const decodeName = item.value
+
+          return (
+            <div
+              title={decodeName}
+              key={item.value}
+              className='row'
+              draggable={isFile}
+              onDragStart={event => {
+                event.preventDefault()
+                ipcRenderer.send('onDragStart', {file: item.value, iconId: item.iconId})
+              }}
+              onDoubleClick={() => selectRow(item)}
+              onMouseDown={event => {
+                if (event.button === 2) {
+                  const context = remote.Menu.buildFromTemplate([{label: '复制到粘贴板', click: () => selectRow(item)}])
+                  context.popup()
+                }
+              }}
+            >
+              <img className={'left'} src={item.format === 'image' ? item.value : watcher.icon[item.iconId]} alt={''} />
+              <div className='right'>
+                {isFile ? (
+                  <>
+                    <p className={'ellipsis'}>{getNameFromPath(decodeName)}</p>
+                    <p className={'subtitle ellipsis'}>{decodeName}</p>
+                  </>
+                ) : (
+                  <p className={'ellipsis'}>{decodeName}</p>
+                )}
+
+                <p className={'subtitle'}>{formatDate(item.time)}</p>
+              </div>
+
+              <svg
+                className='icon close'
+                onClick={() => {
+                  watcher.remove(item)
+                  setValue(watcher.get(format))
+                }}
+              >
+                <use href='#icon-delete' />
+              </svg>
+            </div>
+          )
+        }}
+      />
+      {/*<ScrollView
+        style={{display: 'none'}}
+        onScroll={event => {
+          // const {scrollTop, scrollHeight} = event.currentTarget
+          // console.log('scrollTop, scrollHeight', scrollTop, scrollHeight)
+          // event.persist()
+          // console.log(event)
+          // event.currentTarget
+        }}
+      >
         {list.map(value => {
           const isFile = ['image', 'file'].includes(value.format)
           const decodeName = decodeURIComponent(value.value)
 
           return (
             <div
+              // ref={v => v.getBoundingClientRect()}
               title={decodeName}
               key={value.value}
               className='row'
@@ -123,14 +189,23 @@ const App = () => {
             </div>
           )
         })}
-      </ScrollView>
+      </ScrollView>*/}
     </div>
   )
 }
 
-const ScrollView: React.FC<{direction?: 'row' | 'column'}> = props => {
+const ScrollView: React.FC<{direction?: 'row' | 'column'} & JSX.IntrinsicElements['div']> = ({
+  direction,
+  className,
+  style,
+  ...props
+}) => {
   return (
-    <div className={'scrollView'} style={{flexDirection: props.direction ?? 'column'}}>
+    <div
+      className={`scrollView${className ? ` ${className}` : ''}`}
+      style={{flexDirection: direction ?? 'column', ...style}}
+      {...props}
+    >
       {props.children}
     </div>
   )

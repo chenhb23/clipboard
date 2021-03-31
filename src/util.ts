@@ -31,6 +31,14 @@ export function trimCenter(value: string) {
   return `${value.slice(0, size / 2)}...${value.slice(-size / 2)}`
 }
 
+export function decodeValue(value: string) {
+  try {
+    return decodeURIComponent(value)
+  } catch (e) {
+    return value
+  }
+}
+
 export function getNameFromPath(p: string) {
   const arr = p.replace(new RegExp(`${path.sep}$`), '').split(path.sep)
   return arr[arr.length - 1]
