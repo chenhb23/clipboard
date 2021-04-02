@@ -82,7 +82,7 @@ const App = () => {
           return (
             <div
               title={decodeName}
-              key={item.value}
+              key={decodeName}
               className='row'
               draggable={isFile}
               onDragStart={event => {

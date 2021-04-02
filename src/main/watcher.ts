@@ -46,6 +46,7 @@ export class Watcher extends EventEmitter {
   readClipboard = () => {
     // todo: windows for -> FileNameW
     // const file = clipboard.read('NSFilenamesPboardType')
+    // console.log('clipboard.availableFormats()', clipboard.availableFormats())
     const file = clipboard.read('public.file-url')
     const text = clipboard.readText()
     if (file) {

@@ -30,7 +30,8 @@ export function VirtualList<T>(props: VirtualListProps<T>) {
         if (itemHeight) {
           const index = Math.floor(event.currentTarget.scrollTop / itemHeight)
           if (index !== current) {
-            setCurrent(Math.min(index, listLength - offset))
+            // setCurrent(Math.min(index, listLength - offset))
+            setCurrent(Math.min(index, listLength))
           }
         }
       }}
