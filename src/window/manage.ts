@@ -3,7 +3,7 @@ import {BrowserWindow, Rectangle} from 'electron'
 export default abstract class WindowManage<ARG = any> {
   protected abstract createWindow(...args: ARG[]): BrowserWindow
 
-  win: BrowserWindow
+  public win: BrowserWindow
 
   create(...args: ARG[]) {
     if (!this.win) {

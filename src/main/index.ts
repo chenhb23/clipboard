@@ -1,3 +1,4 @@
+import './global'
 import './handle'
 import watcher from './watcher'
 import {store} from './store'

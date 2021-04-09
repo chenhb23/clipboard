@@ -9,6 +9,7 @@ export interface WatcherDataItem {
   value: string
   time?: number
   iconId?: string
+  fixed?: boolean // todo: 改为 rank ?
 }
 // todo: 移动到 worker
 export class Watcher extends EventEmitter {
@@ -19,13 +20,37 @@ export class Watcher extends EventEmitter {
   icon: {[id: string]: string} = {}
 
   get(format?: WatcherFormat) {
-    if (!format) return this.data
-    return this.data.filter(value => value.format === format)
+    // if (!format) return this.data
+    // return this.data.filter(value => value.format === format)
+    if (!format) return this.sortData
+    return this.sortData.filter(value => value.format === format)
   }
 
   constructor(props?) {
     super(props)
     this.start()
+  }
+
+  get sortData() {
+    return this.data
+      .reduce<WatcherDataItem[][]>(
+        (prev, item) => {
+          prev[item.fixed ? 0 : 1].push(item)
+          return prev
+        },
+        [[], []]
+      )
+      .flat()
+  }
+
+  toggleFixed(value: WatcherDataItem['value']) {
+    const item = this.data.find(item => item.value === value)
+    if (item) {
+      item.fixed = !item.fixed
+      item.time = Date.now()
+      this.data = this.data.slice(0)
+      this.emit('change', this.data)
+    }
   }
 
   restore(value: Partial<Pick<Watcher, 'data' | 'icon'>>) {
@@ -185,7 +210,5 @@ const watcher = new Watcher()
 //     })
 //   })
 // }
-
-global.watcher = watcher
 
 export default watcher

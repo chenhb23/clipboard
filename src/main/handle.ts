@@ -1,6 +1,7 @@
 import {ipcMain, nativeImage} from 'electron'
 import {listWindow, mainWindow, searchWindow} from '../window'
 import watcher from './watcher'
+import {store} from './store'
 
 ipcMain.on('createListWindow', (event, args) => {
   if (listWindow.win) {
@@ -21,4 +22,13 @@ ipcMain.on('onDragStart', (event, args) => {
     file: decodeURIComponent(args.file).replace(/^file:\/\//, ''),
     icon: nativeImage.createFromDataURL(watcher.icon[args.iconId]),
   })
+})
+
+ipcMain.handle('toggleFixedStatus', () => {
+  const isAlwaysOnTop = listWindow.win.isAlwaysOnTop()
+  listWindow.win.setAlwaysOnTop(!isAlwaysOnTop)
+  return !isAlwaysOnTop
+})
+ipcMain.handle('getFixedStatus', () => {
+  return listWindow.win.isAlwaysOnTop()
 })

@@ -11,9 +11,10 @@
 }
 
 .title {
-  /*padding: 24px 10px 10px 10px;*/
-  padding: 11px;
-  /*background-color: red;*/
+  height: 28px;
+  padding: 0 2px;
+  line-height: 28px;
+  text-align: right;
   color: white;
   -webkit-app-region: drag;
 }
@@ -27,7 +28,7 @@
 
 .row {
   background-color: #F0F0F0;
-  padding: 8px 10px 10px 10px;
+  padding: 8px 10px 10px 14px;
   margin: 6px 18px;
   border-radius: 8px;
   color: #4D4D4D;
@@ -36,6 +37,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  /*overflow: hidden;*/
 }
 .row:hover .close {
   display: inherit;

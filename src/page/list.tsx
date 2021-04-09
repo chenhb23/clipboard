@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import ReactDOM from 'react-dom'
 import './list.css'
 import type {WatcherDataItem, Watcher} from '../main/watcher'
@@ -6,6 +6,7 @@ import {ipcRenderer, remote} from 'electron'
 import {decodeValue, formatDate, getNameFromPath} from '../util'
 import {writeClipboard} from '../common/clipboard'
 import {VirtualList} from '../components/VirtualList'
+import {Icon} from '../components/Icon'
 
 const watcher: Watcher = remote.getGlobal('watcher')
 const urlParams = new URLSearchParams(location.search)
@@ -26,6 +27,7 @@ const color = urlParams.get('color')
 
 const App = () => {
   const [data, setValue] = useState(watcher.get(format))
+  const [fixedStatus, setFixedStatus] = useState(false)
   const [search, setSearch] = useState('')
   const list = useMemo(
     () =>
@@ -47,9 +49,18 @@ const App = () => {
     ipcRenderer.send('closeListWindow')
   }, [])
 
+  useEffect(() => {
+    ipcRenderer.invoke('getFixedStatus').then(setFixedStatus)
+  }, [])
+
   return (
     <div className={'container'}>
-      <p className={'title'} style={{backgroundColor: color}} />
+      <p className={'title'} style={{backgroundColor: color}}>
+        <Icon
+          iconName={fixedStatus ? 'fixed' : 'fix'}
+          onClick={() => ipcRenderer.invoke('toggleFixedStatus').then(setFixedStatus)}
+        />
+      </p>
       <div className={'search-container'}>
         {!!search && !!list[0] && (
           <div className={'search-wait ellipsis'}>
@@ -73,7 +84,6 @@ const App = () => {
         list={list}
         // itemHeight={50}
         renderItem={item => {
-          console.log(item.value)
           const isFile = ['image', 'file'].includes(item.format)
           // const decodeName = decodeName(item.value)
           const decodeName = decodeValue(item.value)
@@ -97,6 +107,24 @@ const App = () => {
                 }
               }}
             >
+              {/*<div
+                key={`${item.fixed}`}
+                style={{
+                  position: 'absolute',
+                  left: -15,
+                  top: -15,
+                  width: 30,
+                  height: 30,
+                  backgroundColor: item.fixed ? 'red' : 'blue',
+                  transform: 'rotate(45deg)',
+                }}
+                onClick={() => {
+                  watcher.toggleFixed(item.value)
+                  setValue(watcher.get(format))
+                }}
+              >
+                <span style={{color: '#fff'}}>{item.fixed ? 'true' : 'false'}</span>
+              </div>*/}
               <img className={'left'} src={item.format === 'image' ? item.value : watcher.icon[item.iconId]} alt={''} />
               <div className='right'>
                 {isFile ? (
@@ -111,15 +139,14 @@ const App = () => {
                 <p className={'subtitle'}>{formatDate(item.time)}</p>
               </div>
 
-              <svg
-                className='icon close'
+              <Icon
+                className={'close'}
+                iconName={'delete'}
                 onClick={() => {
                   watcher.remove(item)
                   setValue(watcher.get(format))
                 }}
-              >
-                <use href='#icon-delete' />
-              </svg>
+              />
             </div>
           )
         }}

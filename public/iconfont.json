@@ -1,0 +1,79 @@
+{
+  "id": "2449835",
+  "name": "clipboard",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2065981",
+      "name": "固定",
+      "font_class": "fix",
+      "unicode": "e698",
+      "unicode_decimal": 59032
+    },
+    {
+      "icon_id": "2323313",
+      "name": "固定",
+      "font_class": "fixed",
+      "unicode": "e9b5",
+      "unicode_decimal": 59829
+    },
+    {
+      "icon_id": "5723602",
+      "name": "alter_delete",
+      "font_class": "delete",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "12082191",
+      "name": "paste",
+      "font_class": "paste-actove",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "6149283",
+      "name": "回车",
+      "font_class": "enter",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "7826380",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "11686831",
+      "name": "more",
+      "font_class": "more",
+      "unicode": "e67b",
+      "unicode_decimal": 59003
+    },
+    {
+      "icon_id": "12550390",
+      "name": "粘贴",
+      "font_class": "paste",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "14678964",
+      "name": "command",
+      "font_class": "command",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "14772651",
+      "name": "clear",
+      "font_class": "clear",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    }
+  ]
+}

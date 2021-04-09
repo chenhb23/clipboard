@@ -5,7 +5,7 @@ import fs from 'fs'
 const configPath = path.resolve(app.getAppPath(), 'config')
 const configFileName = 'config'
 
-class Store {
+export class Store {
   data: any = {}
   timer: {[key: string]: NodeJS.Timeout} = {}
 

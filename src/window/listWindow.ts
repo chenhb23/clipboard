@@ -2,6 +2,7 @@ import WindowManage from './manage'
 import {BrowserWindow} from 'electron'
 import {getCursorDisplay} from '../util'
 import path from 'path'
+import {isProd} from '../common/config'
 
 class ListWindow<T extends {type?: string; color?: string} = any> extends WindowManage<T> {
   createWindow(args?: T) {
@@ -23,6 +24,12 @@ class ListWindow<T extends {type?: string; color?: string} = any> extends Window
         enableRemoteModule: true,
       },
     })
+    if (!isProd) {
+      win.setBounds({
+        width: 700,
+      })
+      win.webContents.openDevTools()
+    }
 
     win.once('ready-to-show', () => win.show())
 
