@@ -7,3 +7,5 @@ build
 yarn-error.log
 .cache
 config
+
+out/

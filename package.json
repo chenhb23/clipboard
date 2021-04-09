@@ -5,7 +5,9 @@
   "main": "build/index.js",
   "scripts": {
     "web": "parcel --target electron --public-url . src/page/index.html src/page/search.html src/page/list.html",
-    "start": "tsc && electron ."
+    "start": "tsc && electron-forge start",
+    "package": "tsc && electron-forge package",
+    "make": "tsc && electron-forge make"
   },
   "keywords": [
     "paste",
@@ -29,6 +31,9 @@
     "since 2017-06"
   ],
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@types/node": "^14.14.37",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
@@ -46,7 +51,29 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "./public/icon.icns"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "clipboard"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        }
+      ]
+    }
   }
 }

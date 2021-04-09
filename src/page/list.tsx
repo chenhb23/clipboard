@@ -93,7 +93,7 @@ const App = () => {
             <div
               title={decodeName}
               // key={decodeName}
-              key={index}
+              key={item.time}
               className='row'
               draggable={isFile}
               onDragStart={event => {
@@ -109,7 +109,9 @@ const App = () => {
                       label: item.rank ? '取消顶置' : '顶置',
                       click: () => {
                         watcher.toggleFixed(item.value)
-                        setValue(watcher.get(format))
+                        setTimeout(() => {
+                          setValue(() => watcher.get(format))
+                        }, 500)
                       },
                     },
                   ])
@@ -117,7 +119,7 @@ const App = () => {
                 }
               }}
             >
-              <div key={item.rank} className={'fixed'} style={{visibility: item.rank ? 'visible' : 'hidden'}} />
+              <div className={'fixed'} style={{visibility: item.rank ? 'visible' : 'hidden'}} />
               <img className={'left'} src={item.format === 'image' ? item.value : watcher.icon[item.iconId]} alt={''} />
               <div className='right'>
                 {isFile ? (
