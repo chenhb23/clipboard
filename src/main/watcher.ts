@@ -9,21 +9,21 @@ export interface WatcherDataItem {
   value: string
   time?: number
   iconId?: string
-  fixed?: boolean // todo: 改为 rank ?
+  rank?: number // 排序
 }
 // todo: 移动到 worker
 export class Watcher extends EventEmitter {
   throttle = 800
+  currentRank = 0
 
   // 改为数组形式，降低 add 方法的计算消耗
   data: WatcherDataItem[] = []
   icon: {[id: string]: string} = {}
 
-  get(format?: WatcherFormat) {
-    // if (!format) return this.data
-    // return this.data.filter(value => value.format === format)
-    if (!format) return this.sortData
-    return this.sortData.filter(value => value.format === format)
+  get(format?: WatcherFormat, sort = true) {
+    const data = sort ? this.sortData() : this.data
+    if (!format) return data
+    return data.filter(value => value.format === format)
   }
 
   constructor(props?) {
@@ -31,24 +31,23 @@ export class Watcher extends EventEmitter {
     this.start()
   }
 
-  get sortData() {
-    return this.data
-      .reduce<WatcherDataItem[][]>(
-        (prev, item) => {
-          prev[item.fixed ? 0 : 1].push(item)
-          return prev
-        },
-        [[], []]
-      )
-      .flat()
+  // 使用函数返回，防止直接修改 this.data 内部数据的情况
+  private sortData() {
+    const splitData = this.data.reduce<WatcherDataItem[][]>(
+      (prev, item) => {
+        prev[item.rank ? 0 : 1].push(item)
+        return prev
+      },
+      [[], []]
+    )
+    splitData[0].sort((a, b) => b.rank - a.rank)
+    return splitData.flat()
   }
 
   toggleFixed(value: WatcherDataItem['value']) {
     const item = this.data.find(item => item.value === value)
     if (item) {
-      item.fixed = !item.fixed
-      item.time = Date.now()
-      this.data = this.data.slice(0)
+      item.rank = item.rank ? undefined : ++this.currentRank
       this.emit('change', this.data)
     }
   }
@@ -56,6 +55,12 @@ export class Watcher extends EventEmitter {
   restore(value: Partial<Pick<Watcher, 'data' | 'icon'>>) {
     this.data = value?.data ?? this.data
     this.icon = value?.icon ?? this.icon
+
+    for (const item of this.data) {
+      if (item.rank && item.rank > this.currentRank) {
+        this.currentRank = item.rank
+      }
+    }
   }
 
   private timer: NodeJS.Timeout

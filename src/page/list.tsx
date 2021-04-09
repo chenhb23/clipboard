@@ -57,6 +57,7 @@ const App = () => {
     <div className={'container'}>
       <p className={'title'} style={{backgroundColor: color}}>
         <Icon
+          style={{color: '#fff'}}
           iconName={fixedStatus ? 'fixed' : 'fix'}
           onClick={() => ipcRenderer.invoke('toggleFixedStatus').then(setFixedStatus)}
         />
@@ -82,8 +83,7 @@ const App = () => {
       </div>
       <VirtualList
         list={list}
-        // itemHeight={50}
-        renderItem={item => {
+        renderItem={(item, index) => {
           const isFile = ['image', 'file'].includes(item.format)
           // const decodeName = decodeName(item.value)
           const decodeName = decodeValue(item.value)
@@ -92,7 +92,8 @@ const App = () => {
           return (
             <div
               title={decodeName}
-              key={decodeName}
+              // key={decodeName}
+              key={index}
               className='row'
               draggable={isFile}
               onDragStart={event => {
@@ -102,29 +103,21 @@ const App = () => {
               onDoubleClick={() => selectRow(item)}
               onMouseDown={event => {
                 if (event.button === 2) {
-                  const context = remote.Menu.buildFromTemplate([{label: '复制到粘贴板', click: () => selectRow(item)}])
+                  const context = remote.Menu.buildFromTemplate([
+                    {label: '复制到粘贴板', click: () => selectRow(item)},
+                    {
+                      label: item.rank ? '取消顶置' : '顶置',
+                      click: () => {
+                        watcher.toggleFixed(item.value)
+                        setValue(watcher.get(format))
+                      },
+                    },
+                  ])
                   context.popup()
                 }
               }}
             >
-              {/*<div
-                key={`${item.fixed}`}
-                style={{
-                  position: 'absolute',
-                  left: -15,
-                  top: -15,
-                  width: 30,
-                  height: 30,
-                  backgroundColor: item.fixed ? 'red' : 'blue',
-                  transform: 'rotate(45deg)',
-                }}
-                onClick={() => {
-                  watcher.toggleFixed(item.value)
-                  setValue(watcher.get(format))
-                }}
-              >
-                <span style={{color: '#fff'}}>{item.fixed ? 'true' : 'false'}</span>
-              </div>*/}
+              <div key={item.rank} className={'fixed'} style={{visibility: item.rank ? 'visible' : 'hidden'}} />
               <img className={'left'} src={item.format === 'image' ? item.value : watcher.icon[item.iconId]} alt={''} />
               <div className='right'>
                 {isFile ? (
@@ -139,103 +132,47 @@ const App = () => {
                 <p className={'subtitle'}>{formatDate(item.time)}</p>
               </div>
 
-              <Icon
-                className={'close'}
-                iconName={'delete'}
-                onClick={() => {
-                  watcher.remove(item)
-                  setValue(watcher.get(format))
-                }}
-              />
+              <div>
+                <Icon
+                  className={'close'}
+                  iconName={'delete'}
+                  onClick={() => {
+                    watcher.remove(item)
+                    setValue(watcher.get(format))
+                  }}
+                />
+                <Icon
+                  className={'close'}
+                  iconName={'delete'}
+                  onClick={() => {
+                    watcher.remove(item)
+                    setValue(watcher.get(format))
+                  }}
+                />
+              </div>
             </div>
           )
         }}
       />
-      {/*<ScrollView
-        style={{display: 'none'}}
-        onScroll={event => {
-          // const {scrollTop, scrollHeight} = event.currentTarget
-          // console.log('scrollTop, scrollHeight', scrollTop, scrollHeight)
-          // event.persist()
-          // console.log(event)
-          // event.currentTarget
-        }}
-      >
-        {list.map(value => {
-          const isFile = ['image', 'file'].includes(value.format)
-          const decodeName = decodeURIComponent(value.value)
-
-          return (
-            <div
-              // ref={v => v.getBoundingClientRect()}
-              title={decodeName}
-              key={value.value}
-              className='row'
-              draggable={isFile}
-              onDragStart={event => {
-                event.preventDefault()
-                ipcRenderer.send('onDragStart', {file: value.value, iconId: value.iconId})
-              }}
-              onDoubleClick={() => selectRow(value)}
-              onMouseDown={event => {
-                if (event.button === 2) {
-                  const context = remote.Menu.buildFromTemplate([
-                    {label: '复制到粘贴板', click: () => selectRow(value)},
-                  ])
-                  context.popup()
-                }
-              }}
-            >
-              <img
-                className={'left'}
-                src={value.format === 'image' ? value.value : watcher.icon[value.iconId]}
-                alt={''}
-              />
-              <div className='right'>
-                {isFile ? (
-                  <>
-                    <p className={'ellipsis'}>{getNameFromPath(decodeName)}</p>
-                    <p className={'subtitle ellipsis'}>{decodeName}</p>
-                  </>
-                ) : (
-                  <p className={'ellipsis'}>{decodeName}</p>
-                )}
-
-                <p className={'subtitle'}>{formatDate(value.time)}</p>
-              </div>
-
-              <svg
-                className='icon close'
-                onClick={() => {
-                  watcher.remove(value)
-                  setValue(watcher.get(format))
-                }}
-              >
-                <use href='#icon-delete' />
-              </svg>
-            </div>
-          )
-        })}
-      </ScrollView>*/}
     </div>
   )
 }
 
-const ScrollView: React.FC<{direction?: 'row' | 'column'} & JSX.IntrinsicElements['div']> = ({
-  direction,
-  className,
-  style,
-  ...props
-}) => {
-  return (
-    <div
-      className={`scrollView${className ? ` ${className}` : ''}`}
-      style={{flexDirection: direction ?? 'column', ...style}}
-      {...props}
-    >
-      {props.children}
-    </div>
-  )
-}
+// const ScrollView: React.FC<{direction?: 'row' | 'column'} & JSX.IntrinsicElements['div']> = ({
+//   direction,
+//   className,
+//   style,
+//   ...props
+// }) => {
+//   return (
+//     <div
+//       className={`scrollView${className ? ` ${className}` : ''}`}
+//       style={{flexDirection: direction ?? 'column', ...style}}
+//       {...props}
+//     >
+//       {props.children}
+//     </div>
+//   )
+// }
 
 ReactDOM.render(<App />, document.getElementById('root'))

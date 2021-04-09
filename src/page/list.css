@@ -19,12 +19,12 @@
   -webkit-app-region: drag;
 }
 
-.scrollView {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  overflow-x: scroll;
-}
+/*.scrollView {*/
+/*  display: flex;*/
+/*  flex: 1;*/
+/*  flex-direction: column;*/
+/*  overflow-x: scroll;*/
+/*}*/
 
 .row {
   background-color: #F0F0F0;
@@ -37,7 +37,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  /*overflow: hidden;*/
+  overflow: hidden;
 }
 .row:hover .close {
   display: inherit;
@@ -106,4 +106,14 @@
   bottom: 0;
   margin: auto;
   display: none;
+}
+
+.fixed {
+  position: absolute;
+  left: -15px;
+  top: -15px;
+  width: 30px;
+  height: 30px;
+  background-color: #fa909c;
+  transform: rotate(45deg);
 }
